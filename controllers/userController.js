@@ -43,6 +43,14 @@ exports.list = async (req, res) => {
 // 用户注册
 exports.add = async (req, res) => {
   const userData = req.body;
+  if (!userData.username || !userData.username) {
+    res.status(500).json({
+      code: 500,
+      msg: "请输入账号密码",
+      err: null,
+    });
+    return;
+  }
   const ip = authController.getIp(req);
   const ipUser = await User.find({ ip: ip });
   if (userData.username === "admin") {
@@ -111,6 +119,7 @@ exports.add = async (req, res) => {
 exports.login = async (req, res) => {
   const loginData = req.body;
   console.log(authController.getIp(req));
+
   try {
     const userData = await User.findOne({
       username: loginData.username,
@@ -213,15 +222,27 @@ exports.update = async (req, res) => {
     return;
   }
   findUser.username = userData.username;
-  findUser.password = userData.password;
+  if (userData.password) {
+    findUser.password = userData.password;
+  }
   findUser.avatar = userData.avatar;
 
   // 管理员可以指定类型
   if (authController.isAdmin(req)) {
     findUser.role = userData.role;
   }
+  let result = null;
+  if (userData.password) {
+    result = await findUser.save();
+  } else {
+    result = await User.updateOne(
+      { _id: findUser._id },
+      {
+        ...userData,
+      }
+    );
+  }
 
-  const result = await findUser.save();
   if (result) {
     res.status(200).json({
       code: 200,
