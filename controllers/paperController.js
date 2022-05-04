@@ -364,3 +364,69 @@ exports.getCheckEaxmByPaperId = async (req, res) => {
     });
   });
 };
+
+/**
+ * 获取排行榜
+ * @param {*} req
+ * @param {*} res
+ */
+exports.rank = async (req, res) => {
+  const type = req.query.type || "all"; //排行榜类型
+  const match = [];
+  if (type === "pass") {
+    match[0] = { $match: { isPass: true } };
+  }
+  if (type === "nopass") {
+    match[0] = { $match: { isPass: false } };
+  }
+  Paper.aggregate([
+    ...match,
+    {
+      $group: {
+        _id: "$userId",
+        count: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "users", //关联的表名
+        localField: "_id", //本身的外键
+        foreignField: "_id", //需要关联表的外键
+        as: "detail",
+      },
+    },
+    {
+      $unwind: {
+        path: "$detail", //和上面对应
+        preserveNullAndEmptyArrays: true, //固定的
+      },
+    },
+
+    {
+      $project: {
+        "detail._id": 0,
+        "detail.role": 0,
+        "detail.password": 0,
+        "detail.create_time": 0,
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: 10 },
+  ])
+    .then((exams) => {
+      res.json({
+        code: 200,
+        message: "查询成功",
+        data: exams,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        code: 500,
+        message: "查询失败",
+        data: err,
+      });
+    });
+};

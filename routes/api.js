@@ -104,4 +104,7 @@ router.put("/user", userController.update);
 //删除用户
 router.delete("/user", userController.delete);
 
+//获取排行榜
+router.get("/rank", paperController.rank);
+
 module.exports = router;
