@@ -45,7 +45,15 @@ exports.add = async (req, res) => {
   const userData = req.body;
   const ip = authController.getIp(req);
   const ipUser = await User.find({ ip: ip });
-  console.log(authController.isAdmin(req), ipUser.length);
+  if (userData.username === "admin") {
+    res.status(500).json({
+      code: 500,
+      msg: "该昵称不可用",
+      err: null,
+    });
+    return;
+  }
+
   if (!authController.isAdmin(req) && ipUser.length > 5) {
     res.status(500).json({
       code: 500,
