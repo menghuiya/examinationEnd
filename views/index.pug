@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  h4=info
+  p 网址是:
+    a(href=url) 点击访问
+  h3 techs
+  ul
+    -for(item of techs)
+      li #{item}
+  ul
+    each item in techs
+      li #{item}
