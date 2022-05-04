@@ -115,11 +115,11 @@ exports.login = async (req, res) => {
     const userData = await User.findOne({
       username: loginData.username,
     });
-    if (userData.isban) {
-      throw "该账户已被封禁，请重新注册或者联系管理作者！";
-      return;
-    }
     if (userData) {
+      if (userData.isban) {
+        throw "该账户已被封禁，请重新注册或者联系管理作者！";
+        return;
+      }
       // 因为我上面插入数据库的时候设置了账户名不能重复
       const newUser = new User();
       const compareData = await newUser.comparePassword(
@@ -151,6 +151,7 @@ exports.login = async (req, res) => {
       throw "用户名密码不存在";
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       code: 500,
       msg: err,
