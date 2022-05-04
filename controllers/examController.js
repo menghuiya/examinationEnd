@@ -1,6 +1,5 @@
 let Exam = require("../modules/exam");
 let Examorder = require("../modules/examorder");
-let Auth = require("./adminAuth");
 const ObjectId = require("mongodb").ObjectId;
 const authController = require("../controllers/authController");
 const Paper = require("../modules/paper");
@@ -114,15 +113,6 @@ exports.good = (req, res) => {
 
 //试题修改
 exports.put = async (req, res) => {
-  let isLogin = Auth.test(req);
-  if (!isLogin) {
-    res.json({
-      status: 0,
-      code: 1005,
-      msg: "非法访问!请先登录!",
-    });
-    return;
-  }
   let id = req.body._id || "";
   if (req.body.title == "") {
     res.json({
@@ -166,15 +156,6 @@ exports.put = async (req, res) => {
 
 //试题删除
 exports.delete = async (req, res) => {
-  let isLogin = Auth.test(req);
-  if (!isLogin) {
-    res.json({
-      status: 0,
-      code: 1005,
-      msg: "非法访问!请先登录!",
-    });
-    return;
-  }
   let id = req.query.id || "";
   Exam.remove({
     _id: id,

@@ -1,6 +1,5 @@
 const Paper = require("../modules/paper");
 const Exam = require("../modules/exam");
-const Auth = require("./adminAuth");
 const examController = require("../controllers/examController");
 const authController = require("../controllers/authController");
 const Examorder = require("../modules/examorder");
@@ -18,15 +17,6 @@ const random = async (filters) => {
 
 //试题删除
 exports.delete = async (req, res) => {
-  let isLogin = Auth.test(req);
-  if (!isLogin) {
-    res.json({
-      status: 0,
-      code: 1005,
-      msg: "非法访问!请先登录!",
-    });
-    return;
-  }
   let id = req.query.id || "";
   Paper.remove({
     _id: id,
