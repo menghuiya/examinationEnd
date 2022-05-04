@@ -6,7 +6,7 @@ const authController = require("../controllers/authController");
 //增加后台账号
 exports.add = async (req, res) => {
   const baseData = await User.find({ role: "admin" });
-  if (baseData) {
+  if (baseData.length) {
     res.status(401).json({
       code: 401,
       msg: "非法访问",
