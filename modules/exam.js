@@ -4,7 +4,7 @@ let mongoose = require("mongoose");
 const ExamSchema = new mongoose.Schema(
   {
     title: String, //标题
-    desc: String, //描述
+    desc: mongoose.Schema.Types.Mixed, //描述也有多种形态
     type: String, //类型 单选还是多选
     category: String, // 分类
     knowledge: String, //知识来源

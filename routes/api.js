@@ -9,7 +9,8 @@ const path = require("path");
 const fs = require("fs");
 
 //增加管理员账号 记得改路由或删掉
-router.get("/addAdmin", adminController.add);
+// router.get("/addAdmin", adminController.add);
+// router.get("/updateAll", examController.updateAll);
 
 //用户列表
 router.get("/users", userController.list);

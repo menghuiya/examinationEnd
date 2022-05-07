@@ -6,12 +6,28 @@ const Examorder = require("../modules/examorder");
 const ObjectId = require("mongodb").ObjectId;
 //获取试题列表
 const random = async (filters) => {
-  const single = await Exam.aggregate()
-    .match({ ...filters, type: "single" })
-    .sample(28);
-  const multer = await Exam.aggregate()
-    .match({ ...filters, type: "multiple" })
-    .sample(15);
+  const single = await Exam.aggregate([
+    {
+      $match: {
+        $or: [
+          { ...filters },
+          { ...filters, category: "all" },
+          { type: "single" },
+        ],
+      },
+    },
+  ]).sample(28);
+  const multer = await Exam.aggregate([
+    {
+      $match: {
+        $or: [
+          { ...filters },
+          { ...filters, category: "all" },
+          { type: "multiple" },
+        ],
+      },
+    },
+  ]).sample(15);
   return [...single, ...multer];
 };
 

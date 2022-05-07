@@ -269,14 +269,26 @@ exports.list = async (req, res) => {
 };
 //获取试题列表
 exports.random = async (req, res) => {
-  const result = await Exam.aggregate()
-    .match({
-      subject: "k2",
-      status: true,
-      category: "js",
-      type: "single",
-    })
-    .sample(28);
+  const result = await Exam.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            subject: "k2",
+            status: true,
+            category: "js",
+          },
+          {
+            category: "js",
+            category: "all",
+            subject: "k2",
+            status: true,
+          },
+          { type: "single" },
+        ],
+      },
+    },
+  ]).sample(28);
   const result1 = await Exam.aggregate()
     .match({
       subject: "k2",
@@ -380,4 +392,34 @@ exports.getEaxmByPaperId = async (req, res) => {
       data: exams,
     });
   });
+};
+
+/**
+ * 更新所有desc
+ * @param {*} req
+ * @param {*} res
+ */
+exports.updateAll = async (req, res) => {
+  Exam.updateMany(
+    {},
+    {
+      desc: {
+        type: "str",
+        content: "",
+      },
+    }
+  )
+    .then(() => {
+      res.json({
+        code: 200,
+        msg: "成功",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        code: 500,
+        msg: "成功",
+        err: err,
+      });
+    });
 };
